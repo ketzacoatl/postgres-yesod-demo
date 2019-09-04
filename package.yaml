@@ -3,7 +3,15 @@ version: "0.0.0"
 
 dependencies:
 - base
+- bytestring
+- monad-logger
+- persistent
+- persistent-postgresql
+- persistent-template
+- resourcet
+- text
 - yesod-core
+- yesod-persistent
 
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.
