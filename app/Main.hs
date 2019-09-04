@@ -23,7 +23,6 @@ main =
     (withPostgresqlPool
       "host=localhost port=5432 user=postgres dbname=app password=postgres"
       openDbConnectionCount
-      (\pool -> liftIO (warp 3000 (App pool))))
-      --(\pool -> (runMigration migrateAll) >> liftIO (warp 3000 (App pool))))
+      (\pool -> (runSqlPool (runMigration migrateAll) pool) >> liftIO (warp 3000 (App pool))))
 
 
