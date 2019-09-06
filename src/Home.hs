@@ -35,4 +35,4 @@ getHomeR = do
   where
     selectPersons :: Text -> Handler [Entity Person]
     selectPersons t = runDB $ rawSql s [toPersistValue t]
-      where s = "SELECT ?? FROM persons WHERE name = ? ORDER BY (role_id IS NULL) ASC, name DESC"
+      where s = "SELECT ?? FROM persons WHERE name = ? ORDER BY name DESC"
