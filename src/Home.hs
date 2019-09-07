@@ -36,10 +36,6 @@ getHomeR = do
         [whamlet|
             <p>#{show personA}
             <p>#{show personB}
-            <p>
-                <a href=@{AddR 5 7}>HTML addition
-            <p>
-                <a href=@{AddR 5 7}?_accept=application/json>JSON addition
         |]
   where
     selectPersons :: Text -> Handler [Entity Person]
