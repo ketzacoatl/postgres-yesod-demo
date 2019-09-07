@@ -30,6 +30,7 @@ import Yesod.Persist.Core
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Person
     name Text
+    jsonInfo Text
     deriving Show
 |]
 
