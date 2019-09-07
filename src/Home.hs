@@ -28,14 +28,16 @@ getHomeR = do
         pB <- insert $ Person "Mike"
         pC <- insert $ Person "Chris"
         pure ()
+    personA <- selectPersons "Chris"
+    personB <- selectPersons "Heidi"
+    let personAList = map entityVal personA
+    let personBList = map entityVal personB
 
-    personA <- selectPersons "Heidi"
-    personB <- selectPersons "Mike"
     defaultLayout $ do
         setTitle "Minimal Multifile"
         [whamlet|
-            <p>#{show personA}
-            <p>#{show personB}
+            <p>#{show (personName $ head personAList)}
+            <p>#{show (personName $ head personBList)}
         |]
   where
     selectPersons :: Text -> Handler [Entity Person]
