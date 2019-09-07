@@ -23,10 +23,19 @@ import Model
 
 getHomeR :: Handler Html
 getHomeR = do
-    persons <- selectPersons "Heidi"
+    persons <- runDB $ do
+        pA <- insert $ Person "Heidi"
+        pB <- insert $ Person "Mike"
+        pC <- insert $ Person "Chris"
+        pure ()
+
+    personA <- selectPersons "Heidi"
+    personB <- selectPersons "Mike"
     defaultLayout $ do
         setTitle "Minimal Multifile"
         [whamlet|
+            <p>#{show personA}
+            <p>#{show personB}
             <p>
                 <a href=@{AddR 5 7}>HTML addition
             <p>
