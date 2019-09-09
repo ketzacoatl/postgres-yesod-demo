@@ -1,4 +1,4 @@
-name:    postgres-yesod-demo
+name:    mysql-yesod-demo
 version: "0.0.0"
 
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
 - cassava
 - monad-logger
 - persistent
-- persistent-postgresql
+- persistent-mysql
 - persistent-template
 - resourcet
 - text
@@ -23,7 +23,7 @@ library:
 
 # Runnable executable for our application
 executables:
-  postgres-yesod-demo:
+  mysql-yesod-demo:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -31,4 +31,4 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - postgres-yesod-demo
+    - mysql-yesod-demo
