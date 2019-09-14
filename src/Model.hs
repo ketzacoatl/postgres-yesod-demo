@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE EmptyDataDecls             #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GADTs                      #-}
@@ -8,6 +9,10 @@
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE QuasiQuotes                #-}
 module Model where
+
+import GHC.Generics (Generic)
+
+import Data.Aeson
 
 import Database.Persist.Quasi
 
@@ -26,6 +31,13 @@ import Yesod.Persist.Core
 -- http://www.yesodweb.com/book/persistent/
 --share [mkPersist sqlSettings, mkMigrate "migrateAll"]
 --    $(persistFileWith lowerCaseSettings "config/models")
+
+data PersonInfoJSON = PersonInfoJSON {
+    pInfoName :: Text
+  } deriving (Show, Generic)
+
+instance FromJSON PersonInfoJSON
+instance ToJSON   PersonInfoJSON
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Person

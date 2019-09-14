@@ -2,6 +2,7 @@ name:    postgres-yesod-demo
 version: "0.0.0"
 
 dependencies:
+- aeson
 - base
 - bytestring
 - monad-logger
