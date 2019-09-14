@@ -1,33 +1,27 @@
-> *Note: This project was generated from the `yesod-minimal` scaffolding, and does not support features like `yesod devel`. If you want these features, use the `yesod-simple` stack template.*
+# Setup
 
-## Haskell Setup
-
-1. If you haven't already, [install Stack](https://haskell-lang.org/get-started)
-	* On POSIX systems, this is usually `curl -sSL https://get.haskellstack.org/ | sh`
-2. Install GHC: `stack setup`
-3. Build libraries: `stack build`
-
-## Development
-
-Start a development server with:
+### Postgres
 
 ```
-stack build --exec test-minimal
+$ sudo docker run --name postgres -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $PWD/postgres:/var/lib/postgresql/data postgres
 ```
 
-## Documentation
+```
+vagrant@ubuntu-xenial:/vagrant$ sudo docker exec -it postgres /bin/bash
+root@98a238f7a488:/# psql -U postgres app
+psql (11.5 (Debian 11.5-1.pgdg90+1))
+Type "help" for help.
 
-* Read the [Yesod Book](https://www.yesodweb.com/book) online for free
-* Check [Stackage](http://stackage.org/) for documentation on the packages in your LTS Haskell version, or [search it using Hoogle](https://www.stackage.org/lts/hoogle?q=). Tip: Your LTS version is in your `stack.yaml` file.
-* For local documentation, use:
-	* `stack haddock --open` to generate Haddock documentation for your dependencies, and open that documentation in a browser
-	* `stack hoogle <function, module or type signature>` to generate a Hoogle database and search for your query
-* The [Yesod cookbook](https://github.com/yesodweb/yesod-cookbook) has sample code for various needs
+app=#
+```
 
-## Getting Help
+### MySQL
 
-* Ask questions on [Stack Overflow, using the Yesod or Haskell tags](https://stackoverflow.com/questions/tagged/yesod+haskell)
-* Ask the [Yesod Google Group](https://groups.google.com/forum/#!forum/yesodweb)
-* There are several chatrooms you can ask for help:
-	* For IRC, try Freenode#yesod and Freenode#haskell
-	* [Functional Programming Slack](https://fpchat-invite.herokuapp.com/), in the #haskell, #haskell-beginners, or #yesod channels.
+```
+$ sudo docker run --name mysql -e MYSQL_DATABASE=app -e MYSQL_USER=mysql -e MYSQL_PASSWORD=mysql -e MYSQL_RANDOM_ROOT_PASSWORD=true -d -p 3306:3306 -v /tmp/mysql:/var/lib/mysql mysql
+```
+
+```
+$ sudo docker exec -it mysql /bin/bash
+root@f7705ddbb50a:/# mysql
+```
