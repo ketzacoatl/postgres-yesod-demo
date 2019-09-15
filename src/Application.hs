@@ -9,6 +9,7 @@ import Foundation
 import Yesod.Core
 
 import Add
+import DBSetup
 import Home
 import Model (migrateAll)
 

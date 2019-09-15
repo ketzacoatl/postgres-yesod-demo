@@ -24,11 +24,6 @@ import Model
 
 getHomeR :: Handler Html
 getHomeR = do
-    persons <- runDB $ do
-        pA <- insert $ Person "Chris" "[{\"name\": \"Chris\", \"age\": 75},{\"name\": \"chris\", \"age\": 75},{\"name\": \"kris\", \"age\": 75}]"
-        pB <- insert $ Person "Mike"  "[{\"name\": \"Mike\", \"age\": 88},{\"name\": \"mike\", \"age\": 88}]"
-        pC <- insert $ Person "Heidi" "[{\"name\": \"Heidi\"},{\"name\": \"hidy\"},{\"name\": \"H\"}]"
-        pure () -- why is this necessary for the do block? is this ok, or is there another/better way?
     personA <- selectPersons "Chris"
     personB <- selectPersons "Heidi"
     let personAList = map entityVal personA

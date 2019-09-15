@@ -1,2 +1,3 @@
-/              HomeR GET
-/add/#Int/#Int AddR  GET
+/              HomeR    GET
+/add/#Int/#Int AddR     GET
+/dbsetup       DBSetupR GET
