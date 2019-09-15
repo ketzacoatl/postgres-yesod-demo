@@ -1,3 +1,4 @@
 /              HomeR    GET
 /add/#Int/#Int AddR     GET
+/csv           CSVR     GET
 /dbsetup       DBSetupR GET
