@@ -68,12 +68,11 @@ getCSVR = do
     --    let records = map processPerson personList
     --    writeCsvPersonsToFile "./persons.csv" records
 
-    processPerson :: (Entity Person) -> (Vector PersonCsv)
+    processPerson :: (Entity Person) -> [PersonCsv]
     processPerson p = 
         let fName = personName (entityVal p)
-            personJsonRaw = encodeUtf8 $ personJsonInfo (entityVal p)
-            --personJsonUtf8 = encodeUtf8 personJsonRaw
-            jsonData = processJsonData ((eitherDecode personJsonRaw) :: Either String [PersonJson])
+            personJsonRaw = BS.fromStrict $ encodeUtf8 $ personJsonInfo (entityVal p)
+            jsonData = processJsonData (eitherDecode personJsonRaw :: Either String [PersonJson])
             -- concatMap $ 
             csvRecords = map (generatePersonCSV fName) jsonData
             --csvRecords = Vector.fromList $ map (generatePersonCSV fName) jsonData
