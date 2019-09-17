@@ -51,8 +51,8 @@ import Model
 getCSVR :: Handler Html
 getCSVR = do
     persons <- queryPersons
-    --writeCsv persons
-    let csvRecords = map processPerson persons
+    let csvRecords = concatMap processPerson persons
+    --writeCsvPersonsToFile "./persons.csv" csvRecords
 
     defaultLayout $ do
         setTitle "select and write to CSV demo"
@@ -63,21 +63,13 @@ getCSVR = do
     queryPersons :: Handler [Entity Person]
     queryPersons = runDB $ selectList [PersonName !=. ""] []
 
-    --writeCsv :: [Entity Person] -> IO ()
-    --writeCsv personList = do
-    --    let records = map processPerson personList
-    --    writeCsvPersonsToFile "./persons.csv" records
-
     processPerson :: (Entity Person) -> [PersonCsv]
-    processPerson p = 
-        let fName = personName (entityVal p)
-            personJsonRaw = BS.fromStrict $ encodeUtf8 $ personJsonInfo (entityVal p)
-            jsonData = processJsonData (eitherDecode personJsonRaw :: Either String [PersonJson])
-            -- concatMap $ 
-            csvRecords = map (generatePersonCSV fName) jsonData
-            --csvRecords = Vector.fromList $ map (generatePersonCSV fName) jsonData
-        in return csvRecords 
-        
+    processPerson p = csvRecords
+        where fName = personName (entityVal p)
+              personJsonRaw = BS.fromStrict $ encodeUtf8 $ personJsonInfo (entityVal p)
+              jsonData = processJsonData (eitherDecode personJsonRaw :: Either String [PersonJson])
+              csvRecords = map (generatePersonCSV fName) jsonData
+
     -- a little error handling when processing the JSON input data
     processJsonData :: Either a b -> b
     processJsonData (Left _) = error "unable to parse data"
