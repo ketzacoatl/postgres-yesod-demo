@@ -11,7 +11,7 @@
 
 module CSV where
 
-import           Data.Aeson (eitherDecode, FromJSON, ToJSON(..), toJSON)
+import           Data.Aeson (eitherDecode, FromJSON, ToJSON(..), Value, toJSON)
 import           Data.ByteString.Lazy (ByteString)
 import qualified Data.ByteString.Lazy as BS
 import           Data.Csv
@@ -29,6 +29,7 @@ import           Data.Vector (Vector)
 import qualified Data.Vector as Vector
 import           Data.Text (Text)
 import qualified Data.Text as T
+import           Data.Text.Encoding (encodeUtf8)
 import           GHC.Generics (Generic)
 import           Control.Monad.IO.Class (liftIO)
 
@@ -67,14 +68,22 @@ getCSVR = do
     --    let records = map processPerson personList
     --    writeCsvPersonsToFile "./persons.csv" records
 
-    processPerson :: (Entity Person) -> [Vector PersonCsv]
-    processPerson p = do
+    processPerson :: (Entity Person) -> (Vector PersonCsv)
+    processPerson p = 
         let fName = personName (entityVal p)
-        let personJsonRaw = personJsonInfo (entityVal p)
-        let jsonText = toJSON personJsonRaw
-        let csvRecords = Vector.fromList $ map (generatePersonCSV fName) jsonText
-        return csvRecords 
+            personJsonRaw = encodeUtf8 $ personJsonInfo (entityVal p)
+            --personJsonUtf8 = encodeUtf8 personJsonRaw
+            jsonData = processJsonData ((eitherDecode personJsonRaw) :: Either String [PersonJson])
+            -- concatMap $ 
+            csvRecords = map (generatePersonCSV fName) jsonData
+            --csvRecords = Vector.fromList $ map (generatePersonCSV fName) jsonData
+        in return csvRecords 
         
+    -- a little error handling when processing the JSON input data
+    processJsonData :: Either a b -> b
+    processJsonData (Left _) = error "unable to parse data"
+    processJsonData (Right x) = x
+
     generatePersonCSV :: Text -> PersonJson -> PersonCsv
     generatePersonCSV fname jp = PersonCsv
       { cPersonFullName = fname
