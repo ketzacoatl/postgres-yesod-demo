@@ -11,7 +11,7 @@
 
 module CSV where
 
-import           Data.Aeson (eitherDecode, FromJSON, ToJSON)
+import           Data.Aeson (eitherDecode, FromJSON, ToJSON(..), toJSON)
 import           Data.ByteString.Lazy (ByteString)
 import qualified Data.ByteString.Lazy as BS
 import           Data.Csv
@@ -69,10 +69,10 @@ getCSVR = do
 
     processPerson :: (Entity Person) -> [Vector PersonCsv]
     processPerson p = do
-        let fName = PersonName p
-        let personJsonText = PersonJsonInfo p
-        let personJson = processJsonData (eitherDecode personJsonText :: Either String [PersonJson])
-        let csvRecords = Vector.fromList $ map (generatePersonCSV fName) personJson
+        let fName = personName (entityVal p)
+        let personJsonRaw = personJsonInfo (entityVal p)
+        let jsonText = toJSON personJsonRaw
+        let csvRecords = Vector.fromList $ map (generatePersonCSV fName) jsonText
         return csvRecords 
         
     generatePersonCSV :: Text -> PersonJson -> PersonCsv
@@ -81,11 +81,6 @@ getCSVR = do
       , cPersonName = name jp
       , cPersonAge = age jp
       }
-
-    -- a little error handling when processing the JSON input data
-    processJsonData :: Either a b -> b
-    processJsonData (Left _) = error "unable to parse data"
-    processJsonData (Right x) = x
 
     encodeCsvPersons :: Vector PersonCsv -> ByteString
     encodeCsvPersons = encodeDefaultOrderedByName . Foldable.toList
