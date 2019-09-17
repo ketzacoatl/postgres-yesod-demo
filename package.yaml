@@ -5,12 +5,14 @@ dependencies:
 - aeson
 - base
 - bytestring
+- cassava
 - monad-logger
 - persistent
 - persistent-postgresql
 - persistent-template
 - resourcet
 - text
+- vector
 - yesod-core
 - yesod-persistent
 
