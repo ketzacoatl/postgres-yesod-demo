@@ -50,42 +50,50 @@ import Model
 getCSVR :: Handler Html
 getCSVR = do
     persons <- queryPersons
-    writeCsv persons
+    --writeCsv persons
+    let csvRecords = map processPerson persons
 
     defaultLayout $ do
         setTitle "select and write to CSV demo"
         [whamlet|
-            <p>#{show (persons)}
+            <p>#{show (csvRecords)}
         |]
   where
     queryPersons :: Handler [Entity Person]
     queryPersons = runDB $ selectList [PersonName !=. ""] []
 
-    writeCsv :: [Entity Person] -> IO ()
-    writeCsv peeps = map processPerson peeps
+    --writeCsv :: [Entity Person] -> IO ()
+    --writeCsv personList = do
+    --    let records = map processPerson personList
+    --    writeCsvPersonsToFile "./persons.csv" records
 
     processPerson :: (Entity Person) -> [Vector PersonCsv]
     processPerson p = do
         let fName = PersonName p
         let personJsonText = PersonJsonInfo p
         let personJson = processJsonData (eitherDecode personJsonText :: Either String [PersonJson])
-        let csvRecords = fmap generateCsvPersons fName personJson
+        let csvRecords = Vector.fromList $ map (generatePersonCSV fName) personJson
         return csvRecords 
         
+    generatePersonCSV :: Text -> PersonJson -> PersonCsv
+    generatePersonCSV fname jp = PersonCsv
+      { cPersonFullName = fname
+      , cPersonName = name jp
+      , cPersonAge = age jp
+      }
 
--- #######################
+    -- a little error handling when processing the JSON input data
+    processJsonData :: Either a b -> b
+    processJsonData (Left _) = error "unable to parse data"
+    processJsonData (Right x) = x
 
--- read, process, and print out info from the data.json
---someFunc :: IO ()
---someFunc = do
---  f <- BS.readFile "data.json"
---  print f
---  let d = processJsonData (eitherDecode f :: Either String [JsonItem])
---  print d
---  let csvItems = generateCsvItems d
---  writeCsvItemsToFile "items.csv" csvItems
+    encodeCsvPersons :: Vector PersonCsv -> ByteString
+    encodeCsvPersons = encodeDefaultOrderedByName . Foldable.toList
 
---
+    writeCsvPersonsToFile :: FilePath -> Vector PersonCsv -> IO ()
+    writeCsvPersonsToFile filePath =
+      BS.writeFile filePath . encodeCsvPersons
+
 
 csvHeader :: CSV.Header
 csvHeader =
@@ -125,28 +133,3 @@ instance CSV.ToNamedRecord PersonCsv where
       , "Name" .= cPersonName
       , "Age" .= cPersonAge
       ]
-
--- a little error handling when processing the JSON input data
-processJsonData :: Either a b -> b
-processJsonData (Left _) = error "unable to parse data"
-processJsonData (Right x) = x
-
-generatePersonCsv :: PersonJson -> Text -> PersonCsv
-generatePersonCsv jp fname = PersonCsv
-  { cPersonFullName = fname
-  , cPersonName = name jp
-  , cPersonAge = age jp
-  }
-
--- IMPLEMENT
---generateCsvPersons :: [PersonJson] -> Vector PersonCsv
-generateCsvPersons :: [PersonJson] -> Vector PersonCsv
-generateCsvPersons persons = Vector.fromList $ map processPersonToCsvRecords persons
-  where processPersonToCsvRecords p = map generatePersonCsv persons
-
-encodeCsvPersons :: Vector PersonCsv -> ByteString
-encodeCsvPersons = encodeDefaultOrderedByName . Foldable.toList
-
-writeCsvPersonsToFile :: FilePath -> Vector PersonCsv -> IO ()
-writeCsvPersonsToFile filePath =
-  BS.writeFile filePath . encodeCsvPersons
