@@ -128,3 +128,24 @@ instance CSV.ToNamedRecord PersonCsv where
       , "Name" .= cPersonName
       , "Age" .= cPersonAge
       ]
+
+--
+-- Given the following in postgres:
+--
+--  1 | Chris | [{"name": "Chris", "age": 75},{"name": "chris", "age": 25},{"name": "kris", "age": 17}]
+--  2 | Mike  | [{"name": "Mike", "age": 88},{"name": "mikie", "age": 8}]
+--  3 | Heidi | [{"name": "Heidi", "age": 47},{"name": "hidy", "age": 57},{"age": 37, "name": "H"}]
+--
+--
+-- The CSV output would be like:
+--
+-- Full Name,Name,Age
+-- Chris,Chris,75
+-- Chris,chris,25
+-- Chris,kris,17
+-- Mike,Mike,88
+-- Mike,mikie,8
+-- Heidi,Heidi,47
+-- Heidi,hidy,57
+-- Heidi,H,37
+--
