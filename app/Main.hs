@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 import Application () -- for YesodDispatch instance
 import Foundation
@@ -7,7 +7,6 @@ import Database.Persist.Sql
 import Database.Persist.MySQL (withMySQLPool, defaultConnectInfo, ConnectInfo (..) )
 
 import Control.Monad.Logger
---import Control.Monad.Trans.Resource (runResourceT)
 
 import Model (migrateAll)
 

@@ -12,8 +12,6 @@ import Data.Text (Text)
 
 import Database.Persist
 import Database.Persist.Sql
---import Database.Persist.Quasi
---import Database.Persist.TH
 import Yesod.Persist.Core
 
 import Foundation
