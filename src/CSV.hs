@@ -52,7 +52,7 @@ getCSVR :: Handler Html
 getCSVR = do
     persons <- queryPersons
     let csvRecords = concatMap processPerson persons
-    --writeCsvPersonsToFile "./persons.csv" csvRecords
+    liftIO $ writeCsvPersonsToFile "./persons.csv" (Vector.fromList csvRecords)
 
     defaultLayout $ do
         setTitle "select and write to CSV demo"
