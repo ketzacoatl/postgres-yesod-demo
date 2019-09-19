@@ -4,15 +4,21 @@ import Application () -- for YesodDispatch instance
 import Foundation
 import Yesod.Core
 import Database.Persist.Sql
-import Database.Persist.MySQL (withMySQLPool)
+import Database.Persist.MySQL (withMySQLPool, defaultConnectInfo, ConnectInfo (..) )
 
 import Control.Monad.Logger
 --import Control.Monad.Trans.Resource (runResourceT)
 
 import Model (migrateAll)
 
-pgConnString :: [Char]
-pgConnString = "host=localhost port=3306 user=mysql dbname=app password=mysql"
+--dbConnString :: ConnectInfo
+--dbConnString = ConnectInfo
+--  { connectHost = "localhost"
+--  , connectPort = 3306
+--  , connectUser = "mysql"
+--  , connectDatabase = "app"
+--  , connectPassword = "mysql"
+--  }
 
 openDbConnectionCount :: Int
 openDbConnectionCount = 10
@@ -21,7 +27,13 @@ main :: IO ()
 main =
   runNoLoggingT
     (withMySQLPool
-      "host=localhost port=3306 user=mysql dbname=app password=mysql"
+      (defaultConnectInfo
+        { connectHost = "127.0.0.1"
+        , connectPort = 3306
+        , connectUser = "mysql"
+        , connectDatabase = "app"
+        , connectPassword = "mysql"
+        })
       openDbConnectionCount
       (\pool -> (runSqlPool (runMigration migrateAll) pool) >> liftIO (warp 3000 (App pool))))
 
